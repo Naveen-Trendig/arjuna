@@ -1,0 +1,23 @@
+
+<div id="open-project-structure-root">
+    <ul>
+    {%- for item in tree.children recursive %}
+        {% if item.type == 'file' %}
+            <li data-jstree='{"icon":"jstree-file"}' type='file'>{{ item.name }}
+        {%- endif %}
+        {% if not item.type == 'file' %}
+            {% if not item.name.startswith('.') %}
+                {% if not item.name.startswith('_') %}
+                    <li data-jstree='{"icon":"jstree-folder"}' type='folder'>{{ item.name }}
+                {%- endif %}
+            {%- endif %}
+        {%- endif %}
+        {%- if item.children -%}
+            <ul>{{ loop(item.children) }}</ul>
+        {%- endif %}</li>
+    {%- endfor %}
+    </ul>
+</div>
+<!-- <script>
+    $('#open-project-structure-root').jstree();
+</script> -->

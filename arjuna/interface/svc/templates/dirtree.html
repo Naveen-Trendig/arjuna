@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="/static/dist/libs/jquery.js"></script>
+        <script src='/static/script.js'></script>
+        <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+        <link rel="stylesheet" href="/static/dist/themes/default-dark/style.min.css" />
+        <script src="/static/dist/jstree.min.js"></script>
+        <!-- <script src="/static/jquery.min.js"></script>
+        <script src='/static/jstree.min.js'></script>
+        <link rel="stylesheet" type="text/css" href="/static/style.min.css"/> -->
+    </head>
+<body>
+<section id="container">
+	<header id="header">Path: {{ tree.name }}
+		<div class="brand">
+        </div>
+        <div class="user-nav pull-right" id="user-and-info-nav" style="margin-right: 75px;">
+            <div>User Info</div>
+        </div>
+	</header>
+	<aside class="sidebar">
+		<h1>{{ tree.name }}</h1>
+		<a href='/dir'> Refresh</a>
+		<div id="open-project-structure">
+			<ul>
+			{%- for item in tree.children recursive %}
+				{% if item.type == 'file' %}
+					<li data-jstree='{"icon":"jstree-file"}' type='file'>{{ item.name }}
+				{%- endif %}
+				{% if not item.type == 'file' %}
+					<li data-jstree='{"icon":"jstree-folder"}' type='folder'>{{ item.name }}
+				{%- endif %}
+				{%- if item.children -%}
+					<ul>{{ loop(item.children) }}</ul>
+				{%- endif %}</li>
+			{%- endfor %}
+			</ul>
+		</div>
+	</aside>
+</section>
+<section class="main-content-wrapper">
+	<section class="main-content">
+		<button id="save" onclick=saveFile()>Save File</button>
+		<div id="fileName">
+			<textarea id="fileContent"></textarea>
+		</div>
+		<div id="footer_content"></div>
+	</section>
+</section>
+<script>
+    function getFolderContextMenu($node, tree)
+		{
+			return {
+				"Create": {
+					"separator_before": false,
+					"separator_after": true,
+					"label": "Create",
+					"action": false,
+					"submenu": {
+						"File": {
+							"seperator_before": false,
+							"seperator_after": false,
+							"label": "File",
+							action: function (obj) {
+				
+								var path = tree.get_path($('#open-project-structure').jstree("get_selected", true)[0], '/')
+                                createFile(path, 'New File')
+								$node = tree.create_node($node, { text: 'New File', icon: 'jstree-file', li_attr:{type:'file'} });
+								tree.deselect_all();
+								tree.select_node($node);
+							}
+						},
+						"Folder": {
+							"seperator_before": false,
+							"seperator_after": false,
+							"label": "Folder",
+							action: function (obj) {
+								// var id = obj.attr('id')
+								console.log("tree: ", tree)
+								// var path = obj.get_path('/');
+								var path = tree.get_path($('#open-project-structure').jstree("get_selected", true)[0], '/')
+								console.log(path)
+                                createFolder(path, 'New Folder')
+								console.log("isCreated", isFolderCreated)
+                                if(isFolderCreated) {
+                                    $node = tree.create_node($node, { text: 'New Folder', icon: 'jstree-folder', li_attr:{type:'folder'} });
+                        
+                                    tree.deselect_all();
+                                    tree.select_node($node);
+									isFolderCreated=false;
+                                }
+							}
+						}
+					}
+				},
+				"Rename": {
+					"separator_before": false,
+					"separator_after": false,
+					"label": "Rename",
+					"action": function (obj) {
+						tree.edit($node);
+                        renameFile("")                                    
+					}
+				},
+				"Remove": {
+					"separator_before": false,
+					"separator_after": false,
+					"label": "Remove",
+					"action": function (obj) {
+						tree.delete_node($node);
+					}
+				}
+			};
+		}
+		
+		function getFileContextMenu($node, tree)
+		{
+			return {
+				"Rename": {
+					"separator_before": false,
+					"separator_after": false,
+					"label": "Rename",
+					"action": function (obj) {
+						tree.edit($node);                                    
+					}
+				},
+				"Remove": {
+					"separator_before": false,
+					"separator_after": false,
+					"label": "Remove",
+					"action": function (obj) {
+						tree.delete_node($node);
+					}
+				}
+			};
+		}
+    $('#open-project-structure').jstree({
+            "plugins" : [ "wholerow", "types", "contextmenu", "sort" ],
+            "types" : {
+                'file': {
+                    'icon' : 'jstree-file'
+                }
+            },
+            'core' : {
+               "check_callback": true,
+               "themes" : {
+                    "variant" : "small",
+                    'name': 'default-dark',
+                    // 'responsive': true
+                  }
+            },
+            'sort' : function(a, b) {
+                a1 = this.get_node(a);
+                b1 = this.get_node(b);
+                if (a1.icon == b1.icon){
+                    return (a1.text > b1.text) ? 1 : -1;
+                } else {
+                    return (a1.icon < b1.icon) ? 1 : -1;
+                }
+            },
+            "contextmenu": {
+                "items": function ($node) {
+                    var tree = $("#open-project-structure").jstree(true);
+                    if($node.li_attr.type === 'file')
+                        return getFileContextMenu($node, tree);
+                    else
+                        return getFolderContextMenu($node, tree);                        
+                    
+                }
+            }
+        });
+
+	// handle selecte events
+
+	$('#open-project-structure')
+	// listen for change event
+	.on('changed.jstree', function (e, data) {
+		var i, j, r = [];
+		var path = data.instance.get_path(data.node,'/');
+		for(i = 0, j = data.selected.length; i < j; i++) {
+			r.push(data.instance.get_node(data.selected[i]).text);
+		}
+		// $('#footer_content').html('Selected: ' + r.join(', '));
+		$('#footer_content').html('Selected: ' + path);
+	})
+	// create the instance
+	.jstree();
+
+	$('#open-project-structure')
+	// listen for select_node event
+	.on('select_node.jstree', function (e, data) {
+		// var file_name = data.instance.get_node(data.selected[0]).text;
+		// console.log(data.node)
+		// console.log(data.instance.get_node(data.selected[0]));
+		// $('#fileContent').html('Folder/File Selected: ' + file_name);
+
+		var node_id   = (data.node.id); // element id
+        var type = $("#"+node_id).attr("type");
+		console.log('selected type: ', type)
+		if(type == 'file') {
+			var file_path = data.instance.get_path(data.node,'/');
+			console.log("file path: ", file_path)
+			openFile(file_path);
+		}
+	})
+	// create the instance
+	.jstree();
+</script>
+
+</body>
+</html>

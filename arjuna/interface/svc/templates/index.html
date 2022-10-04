@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <script src="/static/dist/libs/jquery.js"></script>
+    <script src='/static/script.js'></script>
+    <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+    <link rel="stylesheet" href="/static/dist/themes/default-dark/style.min.css" />
+    <script src="/static/dist/jstree.min.js"></script>
+    <!-- <script src="/static/dist/libs/jquery.js"></script>
+    <script src='/static/script.js'></script>
+    <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+    <link rel="stylesheet" href="/static/dist/themes/default-dark/style.min.css" />
+    <script src="/static/dist/jstree.min.js"></script> -->
+    <!-- <script src='/static/script.js'></script>
+    <script src="/static/jquery.min.js"></script>
+    <script src='/static/jstree.min.js'></script>
+    <link rel="stylesheet" type="text/css" href="/static/main.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/style.min.css"/> -->
+</head>
+<body>
+<section id="container">
+    <header id="header">
+        <div class="brand">
+        </div>
+        <div class="user-nav pull-right" id="user-and-info-nav" style="margin-right: 75px;">
+            <div>User Info</div>
+        </div>
+    </header>
+    <aside class="sidebar">
+        <ul>Top
+         <li onclick="openProject()">Open Arjuna Project</li>
+         <div id="open-project-structure"></div>
+         <!-- <li onclick="openFile()">Open File</li>
+        <li onclick="toggleFullscreen()">Toggle fullscreen</li>
+        <li onclick="doStuff()">Temp - Folder Structure</li> -->
+    </ul>
+    </aside>
+</section>
+<section class="main-content-wrapper">
+    <section id="main-content">
+        <button id="save" onclick=saveFile()>Save File</button>
+		<div id="fileName">
+			<textarea id="fileContent"></textarea>
+		</div>
+        <div id="stuff-container"></div>
+        <div id="json-container"></div>
+    </section>
+</section>
+<!-- <script>
+    $("#open-project-structure").jstree();
+</script> -->
+</body>
+</html>
