@@ -26,6 +26,7 @@ from arjuna.tpi.log import *
 class _App(Gui, metaclass=abc.ABCMeta):
 
     def __init__(self, *, config=None, ext_config=None, label=None, gns_dir=None, gns_file_name=None):
+        log_info('in _App init')
         gns_dir = gns_dir is not None and gns_dir or ""
         super().__init__(gns_dir=gns_dir, config=config, ext_config=ext_config, label=label)
         self.__ui = None
@@ -93,6 +94,8 @@ class GuiApp(_App):
     '''
 
     def __init__(self, *args, url: str=None, config: 'Configuration'=None, ext_config: 'AutomatorExtendedConfig'=None, label: str=None, gns_dir: str=None, gns_file_name: str=None, **kwargs):
+        log_info('in GuiApp init')
+        raise "not working."
         super().__init__(gns_dir=gns_dir, gns_file_name=gns_file_name, config=config, ext_config=ext_config, label=label is None and self.__class__.__name__ or label)
         from arjuna.tpi.constant import ArjunaOption
         self.__url = url is not None and url or self.config.value(ArjunaOption.APP_URL)

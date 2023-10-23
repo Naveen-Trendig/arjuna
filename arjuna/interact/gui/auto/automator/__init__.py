@@ -20,6 +20,7 @@ import os
 import time
 import datetime
 import json
+from arjuna.interact.gui.dispatcher.playwright.page import PlayWrightDriverDispatcher
 
 from arjuna.tpi.constant import ArjunaOption
 from arjuna.tpi.guiauto.base.container import GuiWidgetContainer
@@ -31,7 +32,7 @@ from arjuna.interact.gui.auto.finder.wmd import GuiWidgetMetaData
 from arjuna.tpi.guiauto.widget.element import GuiElement
 from arjuna.tpi.helper.image import Image
 from arjuna.interact.gui.auto.automator.network_recorder import BrowserMobNetworkRecorder
-from arjuna import track, log_debug
+from arjuna import track, log_info
 
 @track("debug")
 class GuiAutomator(GuiWidgetContainer,_Dispatchable):
@@ -60,7 +61,8 @@ class GuiAutomator(GuiWidgetContainer,_Dispatchable):
         # As of now it directly connects to Selenium Dispatcher
         # Code should be introduced here which passes through DispatcherPicker
         # based on choice of engine to support more libs.
-        self._dispatcher = SeleniumDriverDispatcher()
+        log_info('setting PlayWright dispatcher')
+        self._dispatcher = PlayWrightDriverDispatcher()
         self._network_recorder = BrowserMobNetworkRecorder(self)
         self.__launch()
 
@@ -147,6 +149,7 @@ class GuiAutomator(GuiWidgetContainer,_Dispatchable):
 
     def __launch(self):
         caps = DriverCapabilities(self.config, self.__econfig)
+        log_info('__launch...')
         self.dispatcher.launch(caps.processed_config)
 
         from arjuna.tpi.guiauto.obj.window import MainWindow

@@ -27,6 +27,7 @@ def check_webpp_nourl(request):
 
 @test
 def check_webpp_url_arg(request):
+    log_info('Im here in test')
     google = GuiApp(url="https://google.com")
     google.launch()
     request.asserter.assert_equal("Google", google.title, "GuiPage title does not match.")

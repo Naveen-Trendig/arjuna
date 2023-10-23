@@ -59,6 +59,8 @@ class Gui(AsserterMixIn):
     '''
 
     def __init__(self, *, gns_dir: str=None, config: 'Configuration'=None, ext_config: 'AutomatorExtendedConfig'=None, label: str=None):
+        from arjuna import log_info
+        log_info('in Gui init')
         super().__init__()
         from arjuna import Arjuna
         self.__config = config is not None and config or Arjuna.get_config()
